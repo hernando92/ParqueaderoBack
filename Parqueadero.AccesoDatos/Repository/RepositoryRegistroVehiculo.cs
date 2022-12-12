@@ -70,6 +70,7 @@ namespace Parqueadero.AccesoDatos.Repository
 
         }
 
+
         public RegistroVehiculo Modificar(RegistroVehiculo registroVehiculo)
         {
             RegistroVehiculo objRegistroVehiculo = _context.RegistroVehiculo.Where(x => x.RegistroVehiculoId == registroVehiculo.RegistroVehiculoId && x.RegistroVehiculoHoraSalida == null).FirstOrDefault();
@@ -98,16 +99,17 @@ namespace Parqueadero.AccesoDatos.Repository
 
         public IEnumerable<RegistroVehiculoDto> ConsultarTotal(Expression<Func<RegistroVehiculo, bool>> objBusqueda)
         {
-            IEnumerable<RegistroVehiculoDto> res = _context.RegistroVehiculo.Where(objBusqueda).Join(
-                                                     _context.Vehiculo,
-                                                     regVehiculo => regVehiculo.VehiculoId,
-                                                     vehiculo => vehiculo.VehiculoId,
-                                                     (regVehiculo, vehiculo) => new RegistroVehiculoDto
-                                                     {
-                                                         Placa = vehiculo.VehiculoPlaca,
-                                                         VehiculoId = vehiculo.VehiculoId
-                                                     }
-                                                     ).ToList();
+            IEnumerable<RegistroVehiculoDto> res = (from objRegistroVehiculo in _context.RegistroVehiculo.Where(objBusqueda)
+                       join objVehiculo in _context.Vehiculo on objRegistroVehiculo.VehiculoId equals objVehiculo.VehiculoId
+                       join objtipoVehiculo in _context.TipoVehiculo on objVehiculo.TipoVehiculoId equals objtipoVehiculo.TipoVehiculoId
+                       select new RegistroVehiculoDto
+                       {
+                           Placa = objVehiculo.VehiculoPlaca,
+                           TipoVehiculoDescripcion = objtipoVehiculo.TipoVehiculoDescripcion,
+                           TotalMinutos = objRegistroVehiculo.RegistroVehiculoHoraSalida.GetValueOrDefault().Subtract(objRegistroVehiculo.RegistroVehiculoHoraIngreso).TotalMinutes,
+                           RegistroVehiculoValorTotal = objRegistroVehiculo.RegistroVehiculoValorTotal
+
+                       }).ToList();
 
             return res;
 

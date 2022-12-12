@@ -17,6 +17,7 @@ namespace Parqueadero.Entidades.Data.Dto
         public Nullable<DateTime> FechaInicio { get; set; }
         public Nullable<DateTime> FechaFin { get; set; }
         public string Placa { get; set; }
+        public string TipoVehiculoDescripcion { get; set; }
         public Nullable<int> TipoVehiculo { get; set; }
         public Nullable<Double> TotalMinutos { get; set; }
     }
