@@ -1,0 +1,10 @@
+version: "3.8"
+services:
+    parqueadero-service:
+       image: img-parqueaderoback
+       container_name: parqueadero
+       build: .
+       environment:
+        - ASPNETCORE_ENVIRONMENT=Docker
+       ports:
+        - "1835:80"
